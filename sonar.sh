@@ -107,6 +107,7 @@ which languages are used and uses the active quality profile for each of those l
 
   20) you can create new quality gates that would have custom conditions to scan the code give the result.
 
+  21) Under webhook options , we can add Jenkins URL whether the project is success. Based on the status Jenkins initiate subsequenct CI/CD pipelines.
 
  
  
