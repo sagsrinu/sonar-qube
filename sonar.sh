@@ -64,7 +64,7 @@ tcp          LISTEN        0              4096                                [:
 tcp          LISTEN        0              128                                               [::]:22                            [::]:*                                              
 tcp          LISTEN        0              25                                                   *:9000                             *:*            users:(("java",pid=31526,fd=13))  
 
-
+change the password after first login.
 
 10) create project in sonarqube and generate token.
 
