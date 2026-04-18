@@ -30,13 +30,15 @@ sudo useradd -r -m -U -d /opt/sonarqube -s /bin/bash sonarqube
 
 sudo chown -R sonarqube:sonarqube /opt/sonarqube-10.5.0.89998/
 
+sudo su - sonarqueb
+
 chmod 777 /opt/sonarqube-10.5.0.89998/
 
 6) Go to Sonarqube path and start the services.
 
 cd /opt/sonarqube-10.5.0.89998/bin/linux-x86-64
 
-sh sonar.sh
+sh sonar.sh start
 
 7) Check the status of the services
 
@@ -44,7 +46,9 @@ sh sonar.sh status
 
 8) allow port 9000 in SG for inbound
 
-9) access sonarqube with public ip of the EC2 and port 9000
+9)  ss - tulnp |grep 9000
+
+access sonarqube with public ip of the EC2 and port 9000
 
 
 [sonarqube@ip-172-31-20-45 linux-x86-64]$ ss -tulnp
