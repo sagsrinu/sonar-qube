@@ -1,7 +1,4 @@
 Sonar Qube integration with Jenkins
------------------------------------
-***************************************************************************	
-					One Instance -1
 ***************************************************************************
 Step by Step process working with Sonar Qube.
 ***************************************************************************
@@ -120,19 +117,10 @@ which languages are used and uses the active quality profile for each of those l
   21) Under webhook options , we can add Jenkins URL whether the project is success. Based on the status Jenkins initiate subsequenct CI/CD pipelines.
 
  
- **************************************************************************	
-					Second Instance -2
-***************************************************************************
-Jenkins
-**************************************************************************
-
-Minimum t3.medium (4GB RAM) required
-Ensure port 8080 is open in EC2 security group
-
-1) Lunch EC Instance with instance type as t2.medium
-
-2) 
-
+********************************************************************************
+							Jenkins setup
+********************************************************************************
+1)
 sudo yum update -y  - Latest Pathc update
 
 #-------java dependency for jenkins------------
@@ -155,31 +143,73 @@ Jenkins URL - http://3.89.104.181:8080/
 
 5) Install plugins - Stage view and SonarQube scanner
 
-6) Now Go to credentials and take the token which is genearted in point no 10 while creating the project and add here
+6) Now Go to  SonarQube   Administration --> Security--> Users--> Administration --> Generate Token 
 
-sqp_c91ffe06ad0e2412fc139e92c23ab9e433329d6a
 
-7) Go to Jenkins - Manage jenkins - 
+7) Go to Jenkins - Manage jenkins -Credentials
+
+add the secret text - which is generated in above point no - 6
+
+8) Go to Jenkins - Manage jenkins -System
 
 Add details for Sonar enviroment variables
 
-
 List of SonarQube installations
+
+Name- Sonar
 --Server URL - http://54.82.3.120:9000/- This is a SonarQube  URL
-Server authentication token - Which is added in point no -6
+Server authentication token - Select from drop down
 
-8)
+9) Now configure the pipelines
 
+******************************************************************************************************************************
 
+pipeline {
+    agent any
+    
+    environment {
+        SONARQUBE = 'sonar'  // SonarQube server name
+    }
 
+    stages {
+        stage('SCM') {
+            steps {
+                git branch: 'main', url: 'https://github.com/sagsrinu/maven_project.git'
+            }
+        }
+        
+        stage('Clean') {
+            steps {
+                sh 'mvn clean'
+            }
+        }
+        
+        stage('Code Quality') {
+            steps {
+                withSonarQubeEnv(SONARQUBE) {
+                    sh 'mvn sonar:sonar'
+                }
+            }
+        }
+        
+        stage('Quality Gate') {
+            steps {
+                script {
+                    def qg = waitForQualityGate()
+                    echo "Quality Gate Response: ${qg}"  // Debugging output
 
- 
- 
- 
- mvn clean verify sonar:sonar \
-  -Dsonar.projectKey=test \
-  -Dsonar.projectName='test' \
-  -Dsonar.host.url=http://54.82.3.120:9000 \
-  -Dsonar.token=sqp_c91ffe06ad0e2412fc139e92c23ab9e433329d6a
+                    if (qg.status != 'OK') {  // Fail only if QG is not OK
+                        error "❌ Pipeline failed due to not meeting SonarQube Quality Gate requirements."
+                    } else {
+                        echo "✅ Quality Gate Passed!"
+                    }
+                }
+            }
+        }
+    }
+
+}
+************************************************************************************************************************************************************************
+10) Build Now
 
 
