@@ -137,7 +137,7 @@ sudo yum update -y  - Latest Pathc update
 
 #-------java dependency for jenkins------------
 
-sudo yum install java-17-amazon-corretto.x86_64
+sudo dnf install java-21-amazon-corretto -y
 
 
 #------------jenkins install-------------
